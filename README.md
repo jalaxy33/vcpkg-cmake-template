@@ -37,7 +37,7 @@ A minimal CMake project template that uses [vcpkg](https://github.com/microsoft/
 
 ### 1. Manage Dependencies with vcpkg
 
-To manage dependencies, you can use vcpkg to install libraries. For example, to install OpenCV and ZLIB, run:
+To manage dependencies, you can use vcpkg to install libraries. For example, to install zlib and fmt, run:
 
 ```bash
 vcpkg add port zlib fmt
@@ -91,7 +91,7 @@ To use vcpkg with CMake, ensure that the `CMAKE_TOOLCHAIN_FILE` variable is set 
 ```
 > Modified from the Microsoft `CMakePresets.json` [example](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-powershell#4---build-and-run-the-project)
 
-Then you can use the `vcpkg` preset to configure your project with vcpkg:
+Then you can use the defined preset to configure your project with vcpkg:
 ```bash
 cmake --preset vcpkg
 cmake --preset vcpkg-release
