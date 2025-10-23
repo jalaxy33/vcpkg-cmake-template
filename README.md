@@ -12,87 +12,76 @@ A minimal CMake project template that uses [vcpkg](https://github.com/microsoft/
 
 ## Usage
 
-1. Configure the project with CMake using the provided presets in [`CMakePresets.json`](./CMakePresets.json):
+1. Configure and build the project using CMake:
 
-   ```bash
-   cmake --preset vcpkg-debug   # For debug build
-   cmake --preset vcpkg-release # For release build
-   ```
-
+    ```bash
+    cmake -B build -DCMAKE_BUILD_TYPE=Debug   # Debug build
+    cmake -B build -DCMAKE_BUILD_TYPE=Release  # Release build
+    ```
+  
 2. Build the project:
 
     ```bash
-    cmake --build build
+    cmake --build build --config Debug   # Debug build
+    cmake --build build --config Release  # Release build
     ```
 
 3. Run the executable:
 
     ```bash
-    ./build/demo.exe   # On Windows
-    ./build/demo      # On Linux/macOS
+    ./build/Debug/demo.exe   # Debug build
+    ./build/Release/demo.exe  # Release build
     ```
 
 
 ## Notes
 
+
 ### 1. Manage Dependencies with vcpkg
 
-To manage dependencies, you can use vcpkg to install libraries. For example, to install zlib and fmt, run:
-
+To manage dependencies, you can use vcpkg to install libraries. For example, to install `zlib` and `fmt`, run:
 ```bash
+# Note: run the following commands in project root directory
+
+# 1. generate manifest `vcpkg.json`
+vcpkg new --application
+
+# 2. install dependencies
 vcpkg add port zlib fmt
 ```
 
-This command will automatically modified the dependency list in [`vcpkg.json`](./vcpkg.json) to trigger automatic installation when configuring the project with CMake.
+This command will update your vcpkg.json file to include the specified port in the dependencies array. 
 
+> Note: You can also manually edit the `vcpkg.json` file to add dependencies. The file should look like this:
 
-Then link the libraries in your [`CMakeLists.txt`](./CMakeLists.txt):
-
-```cmake
-set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/x64-windows/share/opencv4")
-
-find_package(ZLIB REQUIRED)
-find_package(fmt CONFIG REQUIRED)
-
-target_link_libraries(${targetname} PRIVATE ZLIB::ZLIB)
-target_link_libraries(${targetname} PRIVATE fmt::fmt)
+```json
+{
+  "dependencies": [
+    "zlib",
+    "fmt"
+  ]
+}
 ```
-
 
 
 ### 2. Integrate vcpkg with CMake
 
-To use vcpkg with CMake, ensure that the `CMAKE_TOOLCHAIN_FILE` variable is set to the vcpkg toolchain file. The easiest way to do this is to use a [`CMakePresets.json`](./CMakePresets.json) file:
+To integrate vcpkg with CMake, ensure that the `CMAKE_TOOLCHAIN_FILE` is set to the vcpkg toolchain file. This is typically done by adding the following line to your `CMakeLists.txt` before the `project()` command:
 
-```json
-{
-  "version": 2,
-  "configurePresets": [
-    {
-      "name": "vcpkg",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
-      "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "vcpkg-release",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
-      "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    }
-  ]
-}
-```
-> Modified from the Microsoft `CMakePresets.json` [example](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-powershell#4---build-and-run-the-project)
+```cmake
+# vcpkg integration 
+set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
-Then you can use the defined preset to configure your project with vcpkg:
-```bash
-cmake --preset vcpkg
-cmake --preset vcpkg-release
+# before the `project()` command
 ```
+
+Then you can use the `find_package()` command to locate and link against the installed libraries in your CMake project. For example:
+
+```cmake
+find_package(ZLIB REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+
+link_libraries(ZLIB::ZLIB)
+link_libraries(fmt::fmt)
+```
+

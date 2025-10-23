@@ -1,3 +1,15 @@
 # Ignore build artifacts
 build/
 CMakeUserPresets.json
+
+# IDE artifacts
+.vscode/
+.idea/
+.zed/
+
+# cache files
+.cache/
+
+# dependency version control
+*.lock
+vcpkg-configuration.json
