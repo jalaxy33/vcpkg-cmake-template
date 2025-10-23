@@ -15,23 +15,16 @@ A minimal CMake project template that uses [vcpkg](https://github.com/microsoft/
 1. Configure and build the project using CMake:
 
     ```bash
-    cmake -B build
-    ```
-  
-2. Build the project:
-
-    ```bash
-    cmake --build build --config Debug   # Debug build
-    cmake --build build --config Release  # Release build
+    cmake -B build  && cmake -B build   # Debug build
+    cmake -B build  && cmake -B build --config Release  # Release build
     ```
 
-3. Run the executable:
+2. Run the executable:
 
     ```bash
     ./build/Debug/demo.exe   # Debug build
     ./build/Release/demo.exe  # Release build
     ```
-
 
 ## Notes
 
